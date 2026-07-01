@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
 
     const checkAuth = async () => {
         try {
-            const response = await fetch('/api/login/me', {
+            const response = await fetch('/api/auth/me', {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
 
     const login = async (email, password) => {
         try {
-            const response = await fetch('/api/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -70,7 +70,7 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetch('/api/login/logout', {
+            await fetch('/api/auth/logout', {
                 method: 'POST',
                 credentials: 'include',
             });
