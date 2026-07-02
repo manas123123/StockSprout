@@ -98,7 +98,8 @@ class JwtServiceTest {
 
         assertNotNull(claims);
         assertEquals(email, claims.getSubject());
-        assertEquals(userId, claims.get("user_id"));
+        // JWT stores numbers as Integer for small values, convert to Long for comparison
+        assertEquals(userId.longValue(), ((Number) claims.get("user_id")).longValue());
         assertEquals(role, claims.get("role"));
     }
 

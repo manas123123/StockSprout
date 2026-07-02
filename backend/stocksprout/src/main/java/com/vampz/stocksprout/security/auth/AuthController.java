@@ -45,10 +45,10 @@ public class AuthController {
                 .map(user -> {
                     boolean ok = bCryptPasswordEncoder.matches(request.getPassword(), user.getPassword());
                     if (!ok) {
-                        return Map.of(
-                                "status", "error",
-                                "message", "Invalid email or password"
-                        );
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("status", "error");
+                        result.put("message", "Invalid email or password");
+                        return result;
                     }
 
                     // Generate tokens
@@ -66,20 +66,24 @@ public class AuthController {
                     // Refresh portfolio
                     portfolioService.refresh(user.getPortfolio());
 
-                    return Map.of(
-                            "status", "success",
-                            "message", "Login successful",
-                            "user", Map.of(
-                                    "firstName", user.getFirstName(),
-                                    "lastName", user.getLastName(),
-                                    "email", user.getEmail()
-                            )
-                    );
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("status", "success");
+                    result.put("message", "Login successful");
+
+                    Map<String, Object> userData = new HashMap<>();
+                    userData.put("firstName", user.getFirstName());
+                    userData.put("lastName", user.getLastName());
+                    userData.put("email", user.getEmail());
+                    result.put("user", userData);
+
+                    return result;
                 })
-                .orElse(Map.of(
-                        "status", "error",
-                        "message", "Invalid email or password"
-                ));
+                .orElseGet(() -> {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("status", "error");
+                    result.put("message", "Invalid email or password");
+                    return result;
+                });
     }
 
     /**
@@ -114,10 +118,10 @@ public class AuthController {
         // Set new access cookie
         setAccessTokenCookie(response, accessToken);
 
-        return Map.of(
-                "status", "success",
-                "message", "Token refreshed"
-        );
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", "success");
+        result.put("message", "Token refreshed");
+        return result;
     }
 
     /**
@@ -137,10 +141,10 @@ public class AuthController {
         clearAccessCookie(response);
         clearRefreshCookie(response);
 
-        return Map.of(
-                "status", "success",
-                "message", "Logged out"
-        );
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", "success");
+        result.put("message", "Logged out");
+        return result;
     }
 
     /**
@@ -150,21 +154,23 @@ public class AuthController {
     @GetMapping("/me")
     public Map<String, Object> me(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return Map.of(
-                    "status", "error",
-                    "message", "Not authenticated"
-            );
+            Map<String, Object> result = new HashMap<>();
+            result.put("status", "error");
+            result.put("message", "Not authenticated");
+            return result;
         }
 
         AppUser user = (AppUser) authentication.getPrincipal();
-        return Map.of(
-                "status", "success",
-                "user", Map.of(
-                        "firstName", user.getFirstName(),
-                        "lastName", user.getLastName(),
-                        "email", user.getEmail()
-                )
-        );
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", "success");
+
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("firstName", user.getFirstName());
+        userData.put("lastName", user.getLastName());
+        userData.put("email", user.getEmail());
+        result.put("user", userData);
+
+        return result;
     }
 
     /**
