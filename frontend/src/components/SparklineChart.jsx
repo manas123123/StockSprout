@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 import { useTheme } from '../context/ThemeContext';
+import { apiUrl } from '../config/api';
 
 const SparklineChart = ({ symbol, range = '3M', height = 'h-48' }) => {
     const { theme } = useTheme();
@@ -38,7 +39,7 @@ const SparklineChart = ({ symbol, range = '3M', height = 'h-48' }) => {
 
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/marketData/StockPriceHistory?symbol=${symbol}&startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`,
+                    apiUrl(`/api/marketData/StockPriceHistory?symbol=${symbol}&startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`),
                     { credentials: 'include' }
                 );
 

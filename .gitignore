@@ -1,0 +1,11 @@
+# Local environment files may contain credentials.
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# External Spring Boot configuration for local machines.
+backend/stocksprout/config/application.properties
+backend/stocksprout/config/application-*.properties

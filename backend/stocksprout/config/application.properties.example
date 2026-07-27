@@ -1,0 +1,13 @@
+# Copy this file to config/application.properties and replace every placeholder.
+# The copied file is ignored by Git and loaded automatically by Spring Boot.
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/stockdb
+spring.datasource.username=<your-local-database-user>
+spring.datasource.password=<your-local-database-password>
+
+jwt.secret=<generate-a-private-signing-key-of-at-least-32-bytes>
+market-data.api-key=<your-market-data-provider-key>
+
+# Optional local overrides
+server.port=8080
+app.cors.allowed-origins=http://localhost:5173

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { apiUrl } from '../config/api';
 
 const AuthContext = createContext(null);
 
@@ -13,7 +14,7 @@ export function AuthProvider({ children }) {
 
     const checkAuth = async () => {
         try {
-            const response = await fetch('/api/auth/me', {
+            const response = await fetch(apiUrl('/api/auth/me'), {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -31,7 +32,7 @@ export function AuthProvider({ children }) {
 
     const login = async (email, password) => {
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch(apiUrl('/api/auth/login'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -51,7 +52,7 @@ export function AuthProvider({ children }) {
 
     const signup = async (firstName, lastName, email, password) => {
         try {
-            const response = await fetch('/api/signup', {
+            const response = await fetch(apiUrl('/api/signup'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -70,7 +71,7 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetch('/api/auth/logout', {
+            await fetch(apiUrl('/api/auth/logout'), {
                 method: 'POST',
                 credentials: 'include',
             });

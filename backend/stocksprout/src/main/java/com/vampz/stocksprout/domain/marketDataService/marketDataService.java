@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vampz.stocksprout.domain.watchMVC.WatchItem;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -14,21 +14,21 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.vampz.stocksprout.domain.marketDataService.StockCurrentDTO;
 
 @Service
 public class marketDataService {
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+    private final String apiKey;
 
-    public marketDataService() {
+    public marketDataService(@Value("${market-data.api-key}") String apiKey) {
+        this.apiKey = apiKey;
         this.mapper = new ObjectMapper();
         this.mapper.registerModule(new JavaTimeModule());
         this.mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     public StockCurrentDTO getCurrentStockPrice(String symbol) {
-        String apiKey = "Hrtsyr2PSEGAKoWd0diOQrYMKf9kXGXf";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -58,7 +58,6 @@ public class marketDataService {
     }
 
     public List<StockHistDTO> getStockPriceHistory(String symbol, String startDate, String endDate) {
-        String apiKey = "0Cr2Hx25bzdcvjIr76U3OVnlZGVVNpWy";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -85,7 +84,6 @@ public class marketDataService {
     }
 
     public WatchItem getStockData(String symbol) {
-        String apiKey = "0Cr2Hx25bzdcvjIr76U3OVnlZGVVNpWy";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -114,5 +112,4 @@ public class marketDataService {
             return null;
         }
     }
-
 }

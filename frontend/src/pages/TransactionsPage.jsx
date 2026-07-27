@@ -4,6 +4,7 @@ import { Calendar, Filter, Download, TrendingUp, TrendingDown, Search, ArrowUpRi
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
 import { SkeletonSummaryCard, SkeletonTransactionTable } from '../components/Skeleton';
+import { apiUrl } from '../config/api';
 
 const TransactionsPage = () => {
     const [transactions, setTransactions] = useState([]);
@@ -19,7 +20,7 @@ const TransactionsPage = () => {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/portfolio/me', {
+                const response = await fetch(apiUrl('/api/portfolio/me'), {
                     credentials: 'include',
                 });
                 if (response.ok) {

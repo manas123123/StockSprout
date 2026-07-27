@@ -1,91 +1,60 @@
 # JWT Authentication Setup Guide
 
-## Environment Variables
+## Required Configuration
 
-The JWT authentication system requires one environment variable to be set:
+JWT authentication requires a private signing key supplied through `JWT_SECRET`. Use at least 32 random bytes for the HS256 algorithm.
 
-### JWT_SECRET
+Generate a key with either command:
 
-A cryptographically random secret key used to sign and verify JWT tokens. Must be at least 256 bits (32 bytes) for HS256 algorithm.
-
-#### Generating a Secret
-
-**Using OpenSSL (recommended):**
-```bash
-openssl rand -base64 32
-```
-
-**Using Python:**
-```python
-import secrets
-print(secrets.token_urlsafe(32))
-```
-
-#### Setting the Environment Variable
-
-**Windows (Command Prompt):**
-```cmd
-set JWT_SECRET=your-generated-secret-here
-```
-
-**Windows (PowerShell):**
 ```powershell
-$env:JWT_SECRET="your-generated-secret-here"
+openssl rand -base64 32
+python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
 
-**Linux/Mac (bash/zsh):**
-```bash
-export JWT_SECRET="your-generated-secret-here"
+Treat the generated output like a password. Do not paste it into a tracked file, documentation, frontend variable, or chat message.
+
+## Local Development
+
+The recommended local approach is:
+
+1. Copy `backend/stocksprout/config/application.properties.example` to `backend/stocksprout/config/application.properties`.
+2. Replace the JWT placeholder in the copied file.
+3. Keep the copied file private. It is ignored by Git and remains outside the application artifact.
+
+You can instead set `JWT_SECRET` in the terminal that starts Maven.
+
+PowerShell syntax:
+
+```powershell
+$env:JWT_SECRET="<generated-value>"
 ```
 
-#### For Production Deployment
+That setting applies only to the current PowerShell process and programs started from it. Spring Boot does not automatically load a repository `.env` file.
 
-Set this in your hosting platform's environment variable configuration:
-- **Render:** Dashboard → Environment
-- **Railway:** Variables tab
-- **Fly.io:** `flyctl secrets set JWT_SECRET=...`
-- **Docker:** `-e JWT_SECRET=...` or docker-compose env file
+## Hosted Environments
 
-## Configuration Values (Optional)
+Set `JWT_SECRET` through the hosting platform's environment or secret settings. The application code and tracked properties file remain unchanged.
 
-These are set in `application.properties` with defaults:
+Use a separate signing key for every environment. Rotating the key invalidates existing access tokens and requires users to authenticate again.
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `jwt.access-token-expiration` | `3600000` (1 hour) | Access token lifetime in milliseconds |
-| `jwt.refresh-token-expiration` | `604800000` (7 days) | Refresh token lifetime in milliseconds |
+## Optional Token Lifetimes
 
-## Verification
+| Environment variable | Default | Purpose |
+|---|---:|---|
+| `JWT_ACCESS_TOKEN_EXPIRATION` | `3600000` | Access-token lifetime in milliseconds |
+| `JWT_REFRESH_TOKEN_EXPIRATION` | `604800000` | Refresh-token lifetime in milliseconds |
 
-After setting up, start the application and verify:
+## Authentication Endpoints
 
-1. **Login test:**
-   ```bash
-   curl -X POST http://localhost:8080/api/auth/login \
-     -H "Content-Type: application/json" \
-     -d '{"email":"user@example.com","password":"password"}' \
-     -c cookies.txt
-   ```
-
-2. **Check cookies were set:**
-   ```bash
-   cat cookies.txt
-   # Should show access_token and refresh_token
-   ```
-
-3. **Test /me endpoint:**
-   ```bash
-   curl http://localhost:8080/api/auth/me -b cookies.txt
-   # Should return user data
-   ```
+- `POST /api/auth/login` creates access and refresh cookies.
+- `POST /api/auth/refresh` creates a new access cookie from a valid refresh cookie.
+- `POST /api/auth/logout` revokes the refresh token and clears the cookies.
+- `GET /api/auth/me` returns the authenticated user.
 
 ## Security Notes
 
-- **Never commit JWT_SECRET to version control**
-- **Use different secrets for dev/staging/production**
-- **Rotate the secret periodically** (requires all users to re-login)
-- **Keep secret length ≥256 bits** for HS256 security
-
-## Database
-
-The `refresh_tokens` table is auto-created by Hibernate. No manual migration needed for local development.
+- Never commit a real signing key.
+- Never use a `VITE_` variable for a signing key; Vite variables are visible in browser code.
+- Use different keys for local, staging, and production environments.
+- Treat any key previously committed to Git as compromised and rotate it.
+- Removing a key from the current file does not remove it from Git history or existing clones.

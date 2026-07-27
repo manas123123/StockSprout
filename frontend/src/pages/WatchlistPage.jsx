@@ -7,6 +7,7 @@ import { SkeletonSummaryCard, SkeletonWatchlistCard } from '../components/Skelet
 import TradeModal from '../components/TradeModal';
 import SparklineChart from '../components/SparklineChart';
 import StockChart from '../components/StockChart';
+import { apiUrl } from '../config/api';
 
 const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
@@ -35,7 +36,7 @@ const WatchlistPage = () => {
 
     const fetchWatchlist = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/portfolio/watchList', {
+            const response = await fetch(apiUrl('/api/portfolio/watchList'), {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -59,7 +60,7 @@ const WatchlistPage = () => {
 
     const fetchPortfolioData = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/portfolio/me', {
+            const response = await fetch(apiUrl('/api/portfolio/me'), {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -124,7 +125,7 @@ const WatchlistPage = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${upperSymbol}`, {
+            const response = await fetch(apiUrl(`/api/portfolio/watchlist?symbol=${upperSymbol}`), {
                 method: 'POST',
                 credentials: 'include',
             });
@@ -159,7 +160,7 @@ const WatchlistPage = () => {
         setWatchlist(prev => prev.filter(s => s.symbol !== symbol));
 
         try {
-            const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${symbol}`, {
+            const response = await fetch(apiUrl(`/api/portfolio/watchlist?symbol=${symbol}`), {
                 method: 'DELETE',
                 credentials: 'include',
             });
@@ -179,7 +180,7 @@ const WatchlistPage = () => {
     const fetchStockDetails = async (symbol) => {
         setStockDetails(null);
         try {
-            const response = await fetch(`http://localhost:8080/api/marketData/stockData?symbol=${symbol}`, {
+            const response = await fetch(apiUrl(`/api/marketData/stockData?symbol=${symbol}`), {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -262,7 +263,7 @@ const WatchlistPage = () => {
         const endpoint = tradeData.type === 'Buy' ? '/api/portfolio/buy' : '/api/portfolio/sell';
 
         try {
-            const response = await fetch(`http://localhost:8080${endpoint}`, {
+            const response = await fetch(apiUrl(endpoint), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

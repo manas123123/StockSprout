@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceDot } from 'recharts';
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import { apiUrl } from '../config/api';
 
 const TIME_RANGES = [
 
@@ -65,7 +66,7 @@ const StockChart = ({
 
       try {
         const response = await fetch(
-          `http://localhost:8080/api/marketData/StockPriceHistory?symbol=${symbol}&startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`,
+          apiUrl(`/api/marketData/StockPriceHistory?symbol=${symbol}&startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`),
           { credentials: 'include' }
         );
 
