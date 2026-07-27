@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
-import { useTheme } from '../context/ThemeContext';
 import { apiUrl } from '../config/api';
 
 const SparklineChart = ({ symbol, range = '3M', height = 'h-48' }) => {
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
     const [data, setData] = useState([]);
     const [trend, setTrend] = useState('neutral'); // 'up', 'down', 'neutral'
 

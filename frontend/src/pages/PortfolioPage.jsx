@@ -18,7 +18,6 @@ const PortfolioPage = () => {
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [tradeType, setTradeType] = useState('Buy');
   const [watchlist, setWatchlist] = useState([]);
-  const [hoveredStock, setHoveredStock] = useState(null);
   const [portfolioData, setPortfolioData] = useState(null);
   const [stockDetails, setStockDetails] = useState(null);
   const [chartData, setChartData] = useState([]);

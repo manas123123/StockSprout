@@ -14,9 +14,6 @@ const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm, cash = 0 
 
     // Use passed cash for buying power
     const buyingPower = cash;
-    // We don't have the full portfolio value here easily, so we'll just use cash + current trade value as a proxy or just ignore portfolio value updates for now in the modal display if it's too complex.
-    // But let's try to keep it consistent.
-    const currentPortfolioValue = buyingPower; // Simplified for now as we only passed cash
 
     useEffect(() => {
         if (isOpen) {

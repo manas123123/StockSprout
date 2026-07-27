@@ -1,7 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { apiUrl } from '../config/api';
-
-const AuthContext = createContext(null);
+import { AuthContext } from './auth-context';
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
@@ -45,7 +44,7 @@ export function AuthProvider({ children }) {
             } else {
                 return { success: false, message: data.message };
             }
-        } catch (error) {
+        } catch {
             return { success: false, message: 'Login failed. Please try again.' };
         }
     };
@@ -64,7 +63,7 @@ export function AuthProvider({ children }) {
             } else {
                 return { success: false, message: data.message };
             }
-        } catch (error) {
+        } catch {
             return { success: false, message: 'Signup failed. Please try again.' };
         }
     };
@@ -87,13 +86,5 @@ export function AuthProvider({ children }) {
             {children}
         </AuthContext.Provider>
     );
-}
-
-export function useAuth() {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within AuthProvider');
-    }
-    return context;
 }
 

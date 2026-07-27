@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Plus, X, Check, TrendingUp, TrendingDown, Eye, List } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
@@ -12,6 +12,14 @@ import { apiUrl } from '../config/api';
 const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
 ];
+
+const formatMarketCap = (value) => {
+    if (!value) return 'N/A';
+    if (value >= 1e12) return (value / 1e12).toFixed(2) + 'T';
+    if (value >= 1e9) return (value / 1e9).toFixed(2) + 'B';
+    if (value >= 1e6) return (value / 1e6).toFixed(2) + 'M';
+    return value.toString();
+};
 
 const WatchlistPage = () => {
     const [watchlist, setWatchlist] = useState([]);
@@ -34,7 +42,7 @@ const WatchlistPage = () => {
     // Error state
     const [addError, setAddError] = useState('');
 
-    const fetchWatchlist = async () => {
+    const fetchWatchlist = useCallback(async () => {
         try {
             const response = await fetch(apiUrl('/api/portfolio/watchList'), {
                 credentials: 'include',
@@ -56,9 +64,9 @@ const WatchlistPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const fetchPortfolioData = async () => {
+    const fetchPortfolioData = useCallback(async () => {
         try {
             const response = await fetch(apiUrl('/api/portfolio/me'), {
                 credentials: 'include',
@@ -70,12 +78,12 @@ const WatchlistPage = () => {
         } catch (error) {
             console.error('Error fetching portfolio data:', error);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchWatchlist();
         fetchPortfolioData();
-    }, []);
+    }, [fetchWatchlist, fetchPortfolioData]);
 
     // Filter suggestions when addSymbolQuery changes
     useEffect(() => {
@@ -91,14 +99,6 @@ const WatchlistPage = () => {
             setSelectedIndex(-1);
         }
     }, [addSymbolQuery]);
-
-    const formatMarketCap = (value) => {
-        if (!value) return 'N/A';
-        if (value >= 1e12) return (value / 1e12).toFixed(2) + 'T';
-        if (value >= 1e9) return (value / 1e9).toFixed(2) + 'B';
-        if (value >= 1e6) return (value / 1e6).toFixed(2) + 'M';
-        return value.toString();
-    };
 
     const filteredWatchlist = watchlist.filter(stock => {
         const symbol = stock.symbol || '';

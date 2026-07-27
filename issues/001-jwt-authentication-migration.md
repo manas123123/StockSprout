@@ -1,40 +1,39 @@
 # Issue #001: Migrate Authentication to JWT
 
+## Status
+
+Completed on 2026-07-26.
+
 ## Summary
-The StockSprout application currently uses an authentication system that needs to be migrated to use JSON Web Tokens (JWT) for improved security, scalability, and stateless authentication.
 
-## Current State
-The application currently has an authentication system in place, but its specific implementation details need to be documented and understood before migration.
+Replace the previous authentication flow with stateless JWT access tokens and database-backed refresh tokens.
 
-## Desired State
-- Implement JWT-based authentication for API endpoints
-- Use access tokens (short-lived, e.g., 15 minutes) for authenticated requests
-- Implement refresh tokens (longer-lived, e.g., 7 days) for token renewal
-- Secure token storage and transmission
-- Token validation middleware for protected routes
+## Completed Work
 
-## Technical Requirements
-1. **JWT Structure**
-   - Access token: Contains user ID, role, expiration
-   - Refresh token: Stored securely (HttpOnly cookie or database)
+- [x] Generate signed JWT access tokens containing the user ID and role.
+- [x] Validate access tokens on protected API requests.
+- [x] Store refresh-token hashes and expiration data in PostgreSQL.
+- [x] Add login, refresh, logout, and current-user endpoints.
+- [x] Configure Spring Security for stateless authentication.
+- [x] Add scheduled cleanup for expired and revoked refresh tokens.
+- [x] Integrate authentication state into the React frontend.
+- [x] Add JWT and refresh-token unit tests.
+- [x] Document local JWT configuration.
 
-2. **Security Considerations**
-   - Sign tokens with a strong secret key or RSA private key
-   - Validate tokens on each protected request
-   - Implement token expiration and refresh logic
-   - Protect against common JWT vulnerabilities (e.g., algorithm confusion)
+## Verification
 
-3. **API Changes**
-   - Login endpoint returns JWT tokens
-   - Protected routes require valid JWT in Authorization header
-   - Refresh endpoint to issue new access tokens
-   - Logout/invalidation of refresh tokens
+- `JwtServiceTest`: 12 tests passing.
+- `RefreshTokenServiceTest`: 10 tests passing.
+- The complete backend suite passes as part of issue #003.
 
-## Priority
-High - Core security feature
+## Follow-up
+
+Production cookie and CSRF hardening is tracked separately in [issue #005](005-production-authentication-hardening.md).
 
 ## Labels
-authentication, security, jwt, migration
+
+authentication, security, jwt, completed
 
 ## Created
+
 2026-07-01

@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, TrendingUp, User, LogOut } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/auth-context';
 import { ThemeToggle } from './ThemeToggle';
 import { Logo } from './Logo';
 // merge ?
 const DashboardNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
 
   useEffect(() => {

@@ -24,7 +24,6 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
 
     const isInWatchlist = watchlist.includes(selectedSymbol);
     const canAfford = type === 'Buy' ? total <= cash : true; // Simple validation
-    const hasEnoughShares = type === 'Sell' ? quantity <= sharesOwned : true;
 
     useEffect(() => {
         const fetchWatchlist = async () => {

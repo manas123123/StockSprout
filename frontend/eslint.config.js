@@ -23,7 +23,12 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // Core ESLint does not count lowercase JSX namespaces such as
+      // <motion.div> as variable references. Uppercase names represent JSX components.
+      'no-unused-vars': ['error', {
+        varsIgnorePattern: '^(?:[A-Z_]|motion$)',
+        argsIgnorePattern: '^[A-Z_]',
+      }],
     },
   },
 ])

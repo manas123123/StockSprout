@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceDot } from 'recharts';
 import { motion } from 'framer-motion';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../context/theme-context';
 import { apiUrl } from '../config/api';
 
 const TIME_RANGES = [

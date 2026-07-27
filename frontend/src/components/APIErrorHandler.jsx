@@ -84,43 +84,4 @@ const APIErrorHandler = ({
     );
 };
 
-/**
- * useAPIError - Custom hook for managing API errors
- * 
- * Usage:
- * const { error, setError, handleError, clearError } = useAPIError();
- * 
- * try {
- *   const data = await fetchData();
- * } catch (err) {
- *   handleError(err);
- * }
- */
-export const useAPIError = () => {
-    const [error, setError] = useState(null);
-
-    const handleError = (err) => {
-        console.error('API Error:', err);
-
-        // Normalize error format
-        const normalizedError = {
-            message: err.response?.data?.message || err.message || 'An unexpected error occurred',
-            status: err.response?.status || null,
-            statusText: err.response?.statusText || null,
-            originalError: err,
-        };
-
-        setError(normalizedError);
-    };
-
-    const clearError = () => setError(null);
-
-    return {
-        error,
-        setError,
-        handleError,
-        clearError,
-    };
-};
-
 export default APIErrorHandler;

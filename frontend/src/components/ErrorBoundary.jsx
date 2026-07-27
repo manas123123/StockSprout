@@ -11,7 +11,7 @@ class ErrorBoundary extends Component {
         };
     }
 
-    static getDerivedStateFromError(error) {
+    static getDerivedStateFromError() {
         return { hasError: true };
     }
 
@@ -48,7 +48,7 @@ class ErrorBoundary extends Component {
                                 We encountered an unexpected error. Don't worry, your data is safe.
                             </p>
 
-                            {process.env.NODE_ENV === 'development' && this.state.error && (
+                            {import.meta.env.DEV && this.state.error && (
                                 <details className="mb-6 text-left">
                                     <summary className="cursor-pointer text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                         Error Details (Development Only)

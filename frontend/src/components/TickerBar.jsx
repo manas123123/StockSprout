@@ -82,7 +82,7 @@ export default function TickerBar() {
                 changePercent: (changePercent >= 0 ? '+' : '') + changePercent.toFixed(2) + '%',
                 positive: isPositive
               };
-            } catch (error) {
+            } catch {
               // If fetch fails, return a new mock value for this symbol
               const mockPrice = Math.random() * 200 + 50;
               const mockChange = Math.random() * 10 - 5;

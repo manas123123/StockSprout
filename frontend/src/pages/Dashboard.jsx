@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { DollarSign, Wallet, TrendingUp, BarChart3, Activity, ArrowUp, ArrowDown, PieChart, Percent } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/auth-context';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
 import StockChart from '../components/StockChart';

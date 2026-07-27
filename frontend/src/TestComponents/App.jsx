@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import StockChart from '../components/StockChart';
+
+const API_KEY = import.meta.env.VITE_TWELVEDATA_API_KEY;
 
 function App() {
   const [symbol, setSymbol] = useState('AAPL');
@@ -7,9 +9,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const API_KEY = import.meta.env.VITE_TWELVEDATA_API_KEY;
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!API_KEY) {
       setError('API key missing in .env');
       setLoading(false);
@@ -52,7 +52,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [symbol]);
 
   useEffect(() => {
     fetchData(); // Load once
@@ -61,7 +61,7 @@ function App() {
     const interval = setInterval(fetchData, 300000);
 
     return () => clearInterval(interval);
-  }, [symbol]);
+  }, [fetchData]);
 
   return (
     <div className="p-8 bg-gray-900 text-gray-200 min-h-screen font-sans">

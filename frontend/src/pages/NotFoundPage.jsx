@@ -1,6 +1,6 @@
 import { Home, Search, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/auth-context';
 
 const NotFoundPage = () => {
     const navigate = useNavigate();
