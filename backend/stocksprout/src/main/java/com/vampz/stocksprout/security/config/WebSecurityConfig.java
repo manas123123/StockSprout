@@ -82,7 +82,8 @@ public class WebSecurityConfig {
                                 "/api/auth/logout",
                                 "/api/auth/csrf",
                                 "/api/signup",
-                                "/api/verify/**"
+                                "/api/verify/**",
+                                "/actuator/health"
                         ).permitAll()
                         // All other requests require authentication
                         .anyRequest().authenticated()

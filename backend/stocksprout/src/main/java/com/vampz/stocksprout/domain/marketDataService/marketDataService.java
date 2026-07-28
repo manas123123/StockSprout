@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vampz.stocksprout.domain.watchMVC.WatchItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import java.util.List;
 
 @Service
 public class marketDataService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(marketDataService.class);
 
     private final ObjectMapper mapper;
     private final String apiKey;
@@ -41,8 +45,9 @@ public class marketDataService {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("Status: " + response.statusCode());
-            System.out.println("Response: " + response.body());
+            if (!isSuccessful(response, "current quote")) {
+                return null;
+            }
 
             List<StockCurrentDTO> list = mapper.readValue(response.body(),
                     mapper.getTypeFactory().constructCollectionType(List.class, StockCurrentDTO.class));
@@ -51,8 +56,8 @@ public class marketDataService {
             }
             return list.isEmpty() ? null : list.get(0);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            logFailure("current quote", exception);
         }
         return null;
     }
@@ -70,15 +75,16 @@ public class marketDataService {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("Status: " + response.statusCode());
-            System.out.println("Response: " + response.body());
+            if (!isSuccessful(response, "price history")) {
+                return null;
+            }
 
             List<StockHistDTO> list = mapper.readValue(response.body(),
                     mapper.getTypeFactory().constructCollectionType(List.class, StockHistDTO.class));
             return list.isEmpty() ? null : list;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            logFailure("price history", exception);
         }
         return null;
     }
@@ -95,8 +101,9 @@ public class marketDataService {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("Status: " + response.statusCode());
-            System.out.println("Response: " + response.body());
+            if (!isSuccessful(response, "stock details")) {
+                return null;
+            }
 
             // IMPORTANT: ignore unknown fields
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -107,9 +114,27 @@ public class marketDataService {
 
             return list.isEmpty() ? null : list.get(0);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            logFailure("stock details", exception);
             return null;
         }
+    }
+
+    private boolean isSuccessful(HttpResponse<?> response, String operation) {
+        int statusCode = response.statusCode();
+        if (statusCode < 200 || statusCode >= 300) {
+            LOGGER.warn("Market data {} request returned status={}", operation, statusCode);
+            return false;
+        }
+        LOGGER.debug("Market data {} request succeeded with status={}", operation, statusCode);
+        return true;
+    }
+
+    private void logFailure(String operation, Exception exception) {
+        LOGGER.warn(
+                "Market data {} request failed; errorType={}",
+                operation,
+                exception.getClass().getSimpleName()
+        );
     }
 }

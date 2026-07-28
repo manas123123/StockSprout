@@ -11,6 +11,7 @@
 - [Local Setup](#local-setup)
 - [Running the Application](#running-the-application)
 - [JWT Authentication](#jwt-authentication)
+- [Health Checks](#health-checks)
 - [Contribution Guidelines](#contribution-guidelines)
 - [Troubleshooting](#troubleshooting)
 
@@ -53,6 +54,7 @@ The tracked backend configuration reads these environment variables:
 | `JPA_SHOW_SQL` | No | SQL logging; defaults to `false` |
 | `AUTH_COOKIE_SECURE` | No | Set to `true` in hosted HTTPS environments; defaults to `false` for local HTTP |
 | `AUTH_COOKIE_SAME_SITE` | No | Authentication and CSRF cookie policy; defaults to `Lax` |
+| `APP_LOG_LEVEL` | No | Application logging level; defaults to `INFO` |
 
 For local development, use the ignored external properties file described below. A hosting platform should provide the same values through its environment or secret settings.
 
@@ -158,6 +160,23 @@ Authentication endpoints:
 The JWT cookies are host-only and `HttpOnly`, so browser JavaScript cannot read the tokens. Before an unsafe request, the shared frontend API helper obtains a separate `XSRF-TOKEN` cookie and sends its value in the `X-XSRF-TOKEN` header. That CSRF token is not an authentication credential.
 
 See [the JWT setup guide](issues/jwt-setup-guide.md) for additional details.
+
+## Health Checks
+
+StockSprout exposes one public management endpoint:
+
+```text
+GET /actuator/health
+```
+
+- HTTP `200` with `{"status":"UP"}` means the application and database are available.
+- HTTP `503` with `{"status":"DOWN"}` tells a hosting platform to stop routing traffic until the application recovers.
+- Component names, database information, filesystem paths, and other health details are never returned.
+- PostgreSQL is included because authentication and portfolio features require it.
+- The external market-data API is not included, so a temporary provider outage does not make the hosting platform restart StockSprout.
+- No other Actuator endpoint is exposed over HTTP or JMX.
+
+Application code uses Spring's logging system. Set `APP_LOG_LEVEL` only when a different verbosity is needed; market-data response bodies and credential-bearing request URLs are never written to logs.
 
 ## Security Notes
 

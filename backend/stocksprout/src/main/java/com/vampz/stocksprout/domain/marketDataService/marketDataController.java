@@ -15,36 +15,27 @@ public class marketDataController {
         this.marketDataService = marketDataService;
     }
 
-    @GetMapping
-    @RequestMapping(path = "/currentStockPrice")
+    @GetMapping(path = "/currentStockPrice")
     public StockCurrentDTO getCurrentStockPrice(@RequestParam String symbol) {
-        StockCurrentDTO response = marketDataService.getCurrentStockPrice(symbol);
-        System.out.println(response.toString());
-        return response;
+        return marketDataService.getCurrentStockPrice(symbol);
 
     }
 
 
 
-    @GetMapping
-    @RequestMapping(path = "/StockPriceHistory")
+    @GetMapping(path = "/StockPriceHistory")
     public List<StockHistDTO> getStockPriceHistory(
             @RequestParam String symbol,
             @RequestParam String startDate,
             @RequestParam String endDate
             ) {
-        List<StockHistDTO> response = marketDataService.getStockPriceHistory(symbol, startDate, endDate);
-        System.out.println(response.toString());
-        return response;
+        return marketDataService.getStockPriceHistory(symbol, startDate, endDate);
 
     }
 
-    @GetMapping
-    @RequestMapping(path = "/stockData")
+    @GetMapping(path = "/stockData")
     public WatchItem getStockData(@RequestParam String symbol) {
-        WatchItem response = marketDataService.getStockData(symbol);
-        System.out.println(response.toString());
-        return response;
+        return marketDataService.getStockData(symbol);
     }
 
 

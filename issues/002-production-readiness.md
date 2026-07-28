@@ -14,7 +14,7 @@ Prepare StockSprout for a secure, repeatable production deployment while keeping
 - [x] Externalize runtime configuration and remove current hardcoded credentials in [issue #003](003-portable-configuration.md).
 - [x] Establish a green frontend quality baseline in [issue #004](004-frontend-quality-baseline.md).
 - [x] Harden cookie authentication and CSRF protection in [issue #005](005-production-authentication-hardening.md).
-- [ ] Add health checks and production-safe observability in [issue #006](006-health-checks-and-observability.md).
+- [x] Add health checks and production-safe observability in [issue #006](006-health-checks-and-observability.md).
 - [ ] Add continuous integration in [issue #007](007-github-actions-ci.md).
 - [ ] Add optional provider-neutral Docker packaging in [issue #008](008-docker-packaging.md).
 - [ ] Select a provider and perform the first deployment in [issue #009](009-hosting-and-first-deployment.md).
@@ -24,7 +24,7 @@ Prepare StockSprout for a secure, repeatable production deployment while keeping
 
 - [ ] All local quality checks are green and automated in CI.
 - [x] Production authentication settings have been reviewed and tested.
-- [ ] A safe health endpoint is available to the hosting platform.
+- [x] A safe health endpoint is available to the hosting platform.
 - [ ] Production credentials are supplied externally and rotated before deployment.
 - [ ] PostgreSQL is configured for the selected environment.
 - [ ] The application is available through HTTPS at a public address.
