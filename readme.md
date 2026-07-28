@@ -51,6 +51,8 @@ The tracked backend configuration reads these environment variables:
 | `CORS_ALLOWED_ORIGINS` | No | Comma-separated frontend origins; defaults to `http://localhost:5173` |
 | `JPA_DDL_AUTO` | No | Hibernate schema behavior; defaults to `update` for local development |
 | `JPA_SHOW_SQL` | No | SQL logging; defaults to `false` |
+| `AUTH_COOKIE_SECURE` | No | Set to `true` in hosted HTTPS environments; defaults to `false` for local HTTP |
+| `AUTH_COOKIE_SAME_SITE` | No | Authentication and CSRF cookie policy; defaults to `Lax` |
 
 For local development, use the ignored external properties file described below. A hosting platform should provide the same values through its environment or secret settings.
 
@@ -60,12 +62,14 @@ The frontend has two non-secret build/development variables:
 
 | Variable | Purpose |
 |---|---|
-| `VITE_API_BASE_URL` | Optional public backend origin; leave blank for same-origin requests |
+| `VITE_API_BASE_URL` | Leave blank for the supported same-origin cookie-authentication setup |
 | `VITE_API_PROXY_TARGET` | Local Vite proxy target; defaults to `http://localhost:8080` |
 
 All `VITE_` values are visible in the browser bundle and must never contain secrets.
 
-Because authentication uses cookies, same-origin production routing is recommended until cross-site cookie and CSRF hardening is completed.
+StockSprout's supported production topology serves the frontend and `/api` through one public origin. For example, the browser can load `https://stocksprout.example` and call `https://stocksprout.example/api`. A hosting platform or reverse proxy can route `/api` to the backend without changing the application code. The local Vite proxy provides the same browser-visible topology during development.
+
+When hosting over HTTPS, set `AUTH_COOKIE_SECURE=true`. Cross-origin frontend/backend hosting is intentionally not the supported authentication topology; it has different cookie and CSRF requirements.
 
 ## Local Setup
 
@@ -145,10 +149,13 @@ StockSprout uses two tokens:
 
 Authentication endpoints:
 
+- `GET /api/auth/csrf`
 - `POST /api/auth/login`
 - `POST /api/auth/refresh`
 - `POST /api/auth/logout`
 - `GET /api/auth/me`
+
+The JWT cookies are host-only and `HttpOnly`, so browser JavaScript cannot read the tokens. Before an unsafe request, the shared frontend API helper obtains a separate `XSRF-TOKEN` cookie and sends its value in the `X-XSRF-TOKEN` header. That CSRF token is not an authentication credential.
 
 See [the JWT setup guide](issues/jwt-setup-guide.md) for additional details.
 

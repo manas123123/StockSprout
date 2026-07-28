@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Info, Search, Check, Star } from 'lucide-react';
 import TradeModal from './TradeModal';
-import { apiUrl } from '../config/api';
+import { apiFetch } from '../config/api';
 
 const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
@@ -28,7 +28,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
     useEffect(() => {
         const fetchWatchlist = async () => {
             try {
-                const response = await fetch(apiUrl('/api/portfolio/watchList'), {
+                const response = await apiFetch('/api/portfolio/watchList', {
                     credentials: 'include',
                 });
                 if (response.ok) {
@@ -148,7 +148,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
 
         try {
             if (isWatched) {
-                const response = await fetch(apiUrl(`/api/portfolio/watchlist?symbol=${selectedSymbol}`), {
+                const response = await apiFetch(`/api/portfolio/watchlist?symbol=${selectedSymbol}`, {
                     method: 'DELETE',
                     credentials: 'include',
                 });
@@ -158,7 +158,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                     console.error('Failed to remove from watchlist');
                 }
             } else {
-                const response = await fetch(apiUrl(`/api/portfolio/watchlist?symbol=${selectedSymbol}`), {
+                const response = await apiFetch(`/api/portfolio/watchlist?symbol=${selectedSymbol}`, {
                     method: 'POST',
                     credentials: 'include',
                 });

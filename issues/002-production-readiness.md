@@ -13,7 +13,7 @@ Prepare StockSprout for a secure, repeatable production deployment while keeping
 - [x] Complete the JWT authentication migration in [issue #001](001-jwt-authentication-migration.md).
 - [x] Externalize runtime configuration and remove current hardcoded credentials in [issue #003](003-portable-configuration.md).
 - [x] Establish a green frontend quality baseline in [issue #004](004-frontend-quality-baseline.md).
-- [ ] Harden cookie authentication and CSRF protection in [issue #005](005-production-authentication-hardening.md).
+- [x] Harden cookie authentication and CSRF protection in [issue #005](005-production-authentication-hardening.md).
 - [ ] Add health checks and production-safe observability in [issue #006](006-health-checks-and-observability.md).
 - [ ] Add continuous integration in [issue #007](007-github-actions-ci.md).
 - [ ] Add optional provider-neutral Docker packaging in [issue #008](008-docker-packaging.md).
@@ -23,7 +23,7 @@ Prepare StockSprout for a secure, repeatable production deployment while keeping
 ## Completion Criteria
 
 - [ ] All local quality checks are green and automated in CI.
-- [ ] Production authentication settings have been reviewed and tested.
+- [x] Production authentication settings have been reviewed and tested.
 - [ ] A safe health endpoint is available to the hosting platform.
 - [ ] Production credentials are supplied externally and rotated before deployment.
 - [ ] PostgreSQL is configured for the selected environment.

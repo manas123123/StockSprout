@@ -9,13 +9,16 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.vampz.stocksprout.security.auth.AuthCookieService.REFRESH_TOKEN_COOKIE;
 
 @RestController
 @RequestMapping("api/auth")
@@ -27,11 +30,18 @@ public class AuthController {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final PortfolioService portfolioService;
+    private final AuthCookieService authCookieService;
+    private final CsrfTokenRepository csrfTokenRepository;
 
-    private static final String ACCESS_TOKEN_COOKIE = "access_token";
-    private static final String REFRESH_TOKEN_COOKIE = "refresh_token";
-    private static final int ACCESS_COOKIE_AGE = (int) Duration.ofHours(1).toSeconds(); // 1 hour
-    private static final int REFRESH_COOKIE_AGE = (int) Duration.ofDays(7).toSeconds(); // 7 days
+    /**
+     * GET /api/auth/csrf
+     * Creates the non-secret CSRF cookie used by the browser for unsafe requests.
+     */
+    @GetMapping("/csrf")
+    @ResponseStatus(org.springframework.http.HttpStatus.NO_CONTENT)
+    public void csrf(CsrfToken csrfToken) {
+        csrfToken.getToken();
+    }
 
     /**
      * POST /api/auth/login
@@ -60,8 +70,9 @@ public class AuthController {
                     String refreshToken = refreshTokenService.createRefreshToken(user);
 
                     // Set cookies
-                    setAccessTokenCookie(httpResponse, accessToken);
-                    setRefreshTokenCookie(httpResponse, refreshToken);
+                    authCookieService.addAccessToken(httpResponse, accessToken);
+                    authCookieService.addRefreshToken(httpResponse, refreshToken);
+                    csrfTokenRepository.saveToken(null, httpRequest, httpResponse);
 
                     // Refresh portfolio
                     portfolioService.refresh(user.getPortfolio());
@@ -116,7 +127,8 @@ public class AuthController {
         );
 
         // Set new access cookie
-        setAccessTokenCookie(response, accessToken);
+        authCookieService.addAccessToken(response, accessToken);
+        csrfTokenRepository.saveToken(null, request, response);
 
         Map<String, Object> result = new HashMap<>();
         result.put("status", "success");
@@ -138,8 +150,9 @@ public class AuthController {
         }
 
         // Clear cookies
-        clearAccessCookie(response);
-        clearRefreshCookie(response);
+        authCookieService.clearAccessToken(response);
+        authCookieService.clearRefreshToken(response);
+        csrfTokenRepository.saveToken(null, request, response);
 
         Map<String, Object> result = new HashMap<>();
         result.put("status", "success");
@@ -171,58 +184,6 @@ public class AuthController {
         result.put("user", userData);
 
         return result;
-    }
-
-    /**
-     * Set access token cookie (regular cookie for React compatibility)
-     */
-    private void setAccessTokenCookie(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie(ACCESS_TOKEN_COOKIE, token);
-        cookie.setHttpOnly(false); // Required for React to access via document.cookie
-        cookie.setSecure(true);   // HTTPS only in production
-        cookie.setPath("/");
-        cookie.setMaxAge(ACCESS_COOKIE_AGE);
-        cookie.setAttribute("SameSite", "Lax");
-        response.addCookie(cookie);
-    }
-
-    /**
-     * Set refresh token cookie (HTTP-only for security)
-     */
-    private void setRefreshTokenCookie(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE, token);
-        cookie.setHttpOnly(true);  // Not accessible via JavaScript
-        cookie.setSecure(true);    // HTTPS only in production
-        cookie.setPath("/");
-        cookie.setMaxAge(REFRESH_COOKIE_AGE);
-        cookie.setAttribute("SameSite", "Lax");
-        response.addCookie(cookie);
-    }
-
-    /**
-     * Clear access token cookie
-     */
-    private void clearAccessCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie(ACCESS_TOKEN_COOKIE, "");
-        cookie.setHttpOnly(false);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        cookie.setAttribute("SameSite", "Lax");
-        response.addCookie(cookie);
-    }
-
-    /**
-     * Clear refresh token cookie
-     */
-    private void clearRefreshCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE, "");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        cookie.setAttribute("SameSite", "Lax");
-        response.addCookie(cookie);
     }
 
     /**

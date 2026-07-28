@@ -11,3 +11,5 @@ market-data.api-key=<your-market-data-provider-key>
 # Optional local overrides
 server.port=8080
 app.cors.allowed-origins=http://localhost:5173
+app.auth.cookie.secure=false
+app.auth.cookie.same-site=Lax

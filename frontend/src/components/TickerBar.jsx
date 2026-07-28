@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { apiUrl } from '../config/api';
+import { apiFetch } from '../config/api';
 
 const SYMBOLS = [
   'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V'
@@ -53,7 +53,7 @@ export default function TickerBar() {
           const chunk = UNIQUE_SYMBOLS.slice(i, i + chunkSize);
           const chunkPromises = chunk.map(async (symbol) => {
             try {
-              const response = await fetch(apiUrl(`/api/marketData/stockData?symbol=${symbol}`));
+              const response = await apiFetch(`/api/marketData/stockData?symbol=${symbol}`);
 
               if (!response.ok) throw new Error('Fetch failed');
 

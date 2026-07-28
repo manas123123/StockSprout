@@ -7,7 +7,7 @@ import StatsCard from '../components/ui/StatsCard';
 import StockChart from '../components/StockChart';
 import TradePanel from '../components/TradePanel';
 import { SkeletonSummaryCard } from '../components/Skeleton';
-import { apiUrl } from '../config/api';
+import { apiFetch } from '../config/api';
 
 
 
@@ -23,7 +23,7 @@ const Dashboard = () => {
 
   const fetchPortfolioData = async () => {
     try {
-      const response = await fetch(apiUrl('/api/portfolio/me'), {
+      const response = await apiFetch('/api/portfolio/me', {
         credentials: 'include',
       });
       if (!response.ok) {
@@ -51,7 +51,7 @@ const Dashboard = () => {
     const fetchStockPrice = async () => {
       if (!selectedSymbol) return;
       try {
-        const response = await fetch(apiUrl(`/api/marketData/currentStockPrice?symbol=${selectedSymbol}`), {
+        const response = await apiFetch(`/api/marketData/currentStockPrice?symbol=${selectedSymbol}`, {
           credentials: 'include',
         });
         if (response.ok) {
@@ -66,7 +66,7 @@ const Dashboard = () => {
     const fetchStockDetails = async () => {
       if (!selectedSymbol) return;
       try {
-        const response = await fetch(apiUrl(`/api/marketData/stockData?symbol=${selectedSymbol}`), {
+        const response = await apiFetch(`/api/marketData/stockData?symbol=${selectedSymbol}`, {
           credentials: 'include',
         });
         if (response.ok) {
@@ -92,7 +92,7 @@ const Dashboard = () => {
 
     if (tradeData.type === 'Buy') {
       try {
-        const response = await fetch(apiUrl('/api/portfolio/buy'), {
+        const response = await apiFetch('/api/portfolio/buy', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ const Dashboard = () => {
       }
     } else if (tradeData.type === 'Sell') {
       try {
-        const response = await fetch(apiUrl('/api/portfolio/sell'), {
+        const response = await apiFetch('/api/portfolio/sell', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

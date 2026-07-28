@@ -37,6 +37,15 @@ Set `JWT_SECRET` through the hosting platform's environment or secret settings. 
 
 Use a separate signing key for every environment. Rotating the key invalidates existing access tokens and requires users to authenticate again.
 
+Hosted HTTPS environments must also set:
+
+```text
+AUTH_COOKIE_SECURE=true
+AUTH_COOKIE_SAME_SITE=Lax
+```
+
+The supported topology serves the frontend and `/api` through the same public origin. Keep `VITE_API_BASE_URL` blank and route `/api` to the backend through the selected hosting platform or reverse proxy.
+
 ## Optional Token Lifetimes
 
 | Environment variable | Default | Purpose |
@@ -46,10 +55,20 @@ Use a separate signing key for every environment. Rotating the key invalidates e
 
 ## Authentication Endpoints
 
+- `GET /api/auth/csrf` creates the separate CSRF cookie used by the frontend.
 - `POST /api/auth/login` creates access and refresh cookies.
 - `POST /api/auth/refresh` creates a new access cookie from a valid refresh cookie.
 - `POST /api/auth/logout` revokes the refresh token and clears the cookies.
 - `GET /api/auth/me` returns the authenticated user.
+
+## Cookie and CSRF Behavior
+
+- Access and refresh JWT cookies are host-only, `HttpOnly`, and `SameSite=Lax`.
+- The access cookie is limited to `/api`; the refresh cookie is limited to `/api/auth`.
+- Local HTTP uses `AUTH_COOKIE_SECURE=false`. Hosted HTTPS must use `AUTH_COOKIE_SECURE=true`.
+- JavaScript cannot read either JWT.
+- The non-secret `XSRF-TOKEN` cookie is readable by the frontend. The shared API helper copies it to `X-XSRF-TOKEN` for every POST, PUT, PATCH, and DELETE request.
+- Spring Security rejects unsafe requests when the CSRF cookie and header are absent or do not match.
 
 ## Security Notes
 

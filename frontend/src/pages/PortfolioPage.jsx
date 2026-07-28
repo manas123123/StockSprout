@@ -6,7 +6,7 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import { SkeletonPortfolioTable, SkeletonSummaryCard, SkeletonMiniSummary } from '../components/Skeleton';
 import StatsCard from '../components/ui/StatsCard';
 import TradeModal from '../components/TradeModal';
-import { apiUrl } from '../config/api';
+import { apiFetch } from '../config/api';
 
 
 
@@ -24,7 +24,7 @@ const PortfolioPage = () => {
 
   const fetchPortfolioData = async () => {
     try {
-      const response = await fetch(apiUrl('/api/portfolio/me'), {
+      const response = await apiFetch('/api/portfolio/me', {
         credentials: 'include',
       });
       if (!response.ok) {
@@ -47,7 +47,7 @@ const PortfolioPage = () => {
   const fetchStockDetails = async (symbol) => {
     setStockDetails(null);
     try {
-      const response = await fetch(apiUrl(`/api/marketData/stockData?symbol=${symbol}`), {
+      const response = await apiFetch(`/api/marketData/stockData?symbol=${symbol}`, {
         credentials: 'include',
       });
       if (response.ok) {
@@ -68,8 +68,8 @@ const PortfolioPage = () => {
     const formatDate = (date) => date.toISOString().split('T')[0];
 
     try {
-      const response = await fetch(
-        apiUrl(`/api/marketData/StockPriceHistory?symbol=${symbol}&startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`),
+      const response = await apiFetch(
+        `/api/marketData/StockPriceHistory?symbol=${symbol}&startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`,
         { credentials: 'include' }
       );
 
@@ -89,7 +89,7 @@ const PortfolioPage = () => {
 
   const fetchWatchlist = async () => {
     try {
-      const response = await fetch(apiUrl('/api/portfolio/watchList'), {
+      const response = await apiFetch('/api/portfolio/watchList', {
         credentials: 'include',
       });
       if (response.ok) {
@@ -146,7 +146,7 @@ const PortfolioPage = () => {
     try {
       if (isWatched) {
         // Remove from watchlist
-        const response = await fetch(apiUrl(`/api/portfolio/watchlist?symbol=${symbol}`), {
+        const response = await apiFetch(`/api/portfolio/watchlist?symbol=${symbol}`, {
           method: 'DELETE',
           credentials: 'include',
         });
@@ -157,7 +157,7 @@ const PortfolioPage = () => {
         }
       } else {
         // Add to watchlist
-        const response = await fetch(apiUrl(`/api/portfolio/watchlist?symbol=${symbol}`), {
+        const response = await apiFetch(`/api/portfolio/watchlist?symbol=${symbol}`, {
           method: 'POST',
           credentials: 'include',
         });
@@ -202,7 +202,7 @@ const PortfolioPage = () => {
     const endpoint = tradeData.type === 'Buy' ? '/api/portfolio/buy' : '/api/portfolio/sell';
 
     try {
-      const response = await fetch(apiUrl(endpoint), {
+      const response = await apiFetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
